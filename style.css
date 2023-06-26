@@ -12,6 +12,7 @@
 }
 
 .catalog {
+    display: flex;
 }
 
 .catalog__header {
@@ -40,10 +41,6 @@
 
 }
 
-.catalog__label {
-
-}
-
 .catalog__input {
     all: unset;
     border-bottom: 3px solid var(--secondary-color--light);
@@ -65,7 +62,14 @@
 }
 
 .catalog__content {
-
+    position: absolute;
+    background-color: antiquewhite;
+    min-height: 50vh;
+    width: 90vw;
+    top: 15vh;
+    left: 50vw;
+    max-width: 1000px;
+    transform: translateX(-50%);
 }
 
 .catalog__button {
