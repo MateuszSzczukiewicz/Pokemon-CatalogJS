@@ -12,19 +12,20 @@
 }
 
 .catalog {
-    display: flex;
+    position: relative;
 }
 
 .catalog__header {
     position: absolute;
     top: 5vh;
-    left: 50vw;
-    width: 90vw;
-    max-width: 1000px;
     transform: translateX(-50%);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    min-height: 45vh;
+    width: 90%;
+    max-width: 1180px;
+    left: 50vw;
 }
 
 .catalog__title {
@@ -62,33 +63,81 @@
 }
 
 .catalog__content {
+    display: grid;
+    gap: 25px;
     position: absolute;
-    background-color: antiquewhite;
-    min-height: 50vh;
-    width: 90vw;
+    min-height: 45vh;
+    width: 90%;
+    max-width: 1180px;
     top: 15vh;
     left: 50vw;
-    max-width: 1000px;
     transform: translateX(-50%);
+    padding-bottom: 80px;
+}
+
+@media (max-width: 524px) {
+    .catalog__content {grid-template-columns: repeat(1, 1fr)}
+}
+
+@media (min-width: 525px) {
+    .catalog__content {grid-template-columns: repeat(2, 1fr)}
+}
+
+@media (min-width: 800px) {
+    .catalog__content {grid-template-columns: repeat(3, 1fr)}
+}
+
+@media (min-width: 1075px) {
+    .catalog__content {grid-template-columns: repeat(4, 1fr)}
+}
+
+.catalog__main {
+    position: absolute;
+    bottom: 5vh;
+    height: 45vh;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1180px;
+    left: 50vw;
 }
 
 .catalog__button {
-    all: unset;
-    position: absolute;
-    left: 50vw;
-    transform: translateX(-50%);
-    bottom: 5vh;
+    /*position: fixed;*/
+    /*bottom: 0;*/
+    /*left: 50vw;*/
+    /*transform: translateX(-50%);*/
     background-color: var(--primary-color);
     color: white;
     font-family: Lato, sans-serif;
-    font-size: 30px;
+    font-size: 24px;
     padding: 20px 50px;
     border: solid 5px var(--primary-color);
     cursor: pointer;
     transition: 0.2s;
+    height: 80px;
+    width: 220px;
 }
 
 .catalog__button:hover {
     background-color: white;
     color: var(--primary-color);
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+.card__description {
+    flex-direction: row;
+}
+
+.card__text {
+    font-family: Lato, sans-serif;
+}
+
+.card__text-right {
+    text-align: right;
 }
