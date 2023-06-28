@@ -106,6 +106,12 @@ body {
     color: var(--primary-color);
 }
 
+.card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .card__text {
     font-family: Lato, sans-serif;
 }
