@@ -1,5 +1,6 @@
 const content = document.getElementById("catalog-content");
 const catalogButton = document.getElementById("catalog-button");
+const search = document.getElementById("search-input");
 const API_KEY = "cc4a5f02-6fa6-41fb";
 const API_ID = ["xy1-1", "swsh4-25"];
 const API_URL = `https://api.pokemontcg.io/v2/cards/${
@@ -30,13 +31,13 @@ const cardApi = async () => {
       cardRarity,
     };
   } catch (error) {
-    console.error(Error);
+    console.error(error);
   }
 };
 
 const renderCard = async () => {
-  cardApi().then((data) => {
-    console.log(data);
+  try {
+    const data = await cardApi();
     const card = `
     <div class="card">
       <div class="card__header">
@@ -52,12 +53,32 @@ const renderCard = async () => {
     </div>
       `;
     for (let i = 0; i <= 3; i++) {
-      console.log(i);
-      // content.innerHTML = card;
       content.innerHTML += card;
     }
-  });
+    return card;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
+const searchCard = async (e) => {
+  try {
+    const cards = document.querySelectorAll(".card");
+    const value = e.target.value;
+
+    for (let i = 0; i <= cards.length; i++) {
+      const card = cards[i];
+      const data = await cardApi();
+      const isVisible = data.cardName
+        .toLowerCase()
+        .includes(value.toLowerCase());
+      card.style.display = isVisible ? "block" : "none";
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+search.addEventListener("input", searchCard);
 document.addEventListener("DOMContentLoaded", renderCard);
 catalogButton.addEventListener("click", renderCard);
