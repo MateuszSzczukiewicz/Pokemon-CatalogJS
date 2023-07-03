@@ -5,20 +5,18 @@ class PokemonCatalog {
     this.searchInput = document.getElementById("search-input");
     this.cardList = [];
     this.API_ID = ["xy1-1", "swsh4-25"];
-    this.renderCard = this.renderCard.bind(this);
-    this.getCard = this.getCard.bind(this);
-    this.addCard = this.addCard.bind(this);
     this.searchCard = this.searchCard.bind(this);
+    this.addCard = this.addCard.bind(this);
     this.searchInput.addEventListener("input", this.searchCard);
     this.catalogButton.addEventListener("click", this.addCard);
     document.addEventListener("DOMContentLoaded", this.addCard);
   }
 
-  getRandomApiUrl = () => {
+  getRandomApiUrl() {
     const randomIndex = Math.floor(Math.random() * this.API_ID.length);
     const selectedId = this.API_ID[randomIndex];
     return `https://api.pokemontcg.io/v2/cards/${selectedId}`;
-  };
+  }
 
   async getCard() {
     try {
@@ -32,7 +30,8 @@ class PokemonCatalog {
   }
 
   async addCard() {
-    for (let i = 0; i <= 3; i++) {
+    const cardCount = 4;
+    for (let i = 0; i < cardCount; i++) {
       await this.getCard();
     }
     this.renderCard();
@@ -40,6 +39,7 @@ class PokemonCatalog {
 
   renderCard() {
     const fragment = document.createDocumentFragment();
+    this.content.innerHTML = "";
     this.cardList.forEach(
       ({ name, number, images, supertype, subtypes, rarity }) => {
         const div = document.createElement("div");
@@ -60,36 +60,31 @@ class PokemonCatalog {
         fragment.appendChild(div);
       }
     );
-    this.content.innerHTML = "";
     this.content.appendChild(fragment);
   }
 
   searchCard(e) {
-    try {
-      const value = e.target.value;
-      const removedCards = [];
+    const value = e.target.value.toLowerCase();
+    const removedCards = [];
 
-      for (let i = this.cardList.length - 1; i >= 0; i--) {
-        const card = this.cardList[i];
-        const name = card.name;
-        const isVisible = name.toLowerCase().includes(value.toLowerCase());
-        if (!isVisible) {
-          removedCards.push(this.cardList.splice(i, 1)[0]);
-        }
+    for (let i = this.cardList.length - 1; i >= 0; i--) {
+      const card = this.cardList[i];
+      const name = card.name.toLowerCase();
+      const isVisible = name.includes(value);
+      if (!isVisible) {
+        removedCards.push(this.cardList.splice(i, 1)[0]);
       }
-
-      for (const removedCard of removedCards) {
-        const name = removedCard.name;
-        const isVisible = name.toLowerCase().includes(value.toLowerCase());
-        if (isVisible) {
-          this.cardList.push(removedCard);
-        }
-      }
-
-      this.renderCard();
-    } catch (error) {
-      console.error(error);
     }
+
+    for (const removedCard of removedCards) {
+      const name = removedCard.name.toLowerCase();
+      const isVisible = name.includes(value);
+      if (isVisible) {
+        this.cardList.push(removedCard);
+      }
+    }
+
+    this.renderCard();
   }
 }
 
