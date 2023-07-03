@@ -1,24 +1,49 @@
-const content = document.getElementById("catalog-content");
-const catalogButton = document.getElementById("catalog-button");
-const searchInput = document.getElementById("search-input");
+class PokemonCatalog {
+  constructor() {
+    this.content = document.getElementById("catalog-content");
+    this.catalogButton = document.getElementById("catalog-button");
+    this.searchInput = document.getElementById("search-input");
+    this.cardList = [];
+    this.API_ID = ["xy1-1", "swsh4-25"];
+    this.renderCard = this.renderCard.bind(this);
+    this.getCard = this.getCard.bind(this);
+    this.addCard = this.addCard.bind(this);
+    this.searchCard = this.searchCard.bind(this);
+    this.searchInput.addEventListener("input", this.searchCard);
+    this.catalogButton.addEventListener("click", this.addCard);
+    document.addEventListener("DOMContentLoaded", this.addCard);
+  }
 
-let cardList = [];
+  getRandomApiUrl = () => {
+    const randomIndex = Math.floor(Math.random() * this.API_ID.length);
+    const selectedId = this.API_ID[randomIndex];
+    return `https://api.pokemontcg.io/v2/cards/${selectedId}`;
+  };
 
-const API_KEY = "cc4a5f02-6fa6-41fb";
-const API_ID = ["xy1-1", "swsh4-25"];
+  async getCard() {
+    try {
+      const response = await fetch(this.getRandomApiUrl());
+      const data = await response.json();
+      this.cardList.push(data.data);
+      console.log(this.cardList);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
-const getRandomApiUrl = () => {
-  const randomIndex = Math.floor(Math.random() * API_ID.length);
-  const selectedId = API_ID[randomIndex];
-  return `https://api.pokemontcg.io/v2/cards/${selectedId}`;
-};
+  async addCard() {
+    for (let i = 0; i <= 3; i++) {
+      await this.getCard();
+    }
+    this.renderCard();
+  }
 
-const renderCard = () => {
-  const fragment = document.createDocumentFragment();
-  cardList.forEach(({ name, number, images, supertype, subtype, rarity }) => {
-    const div = document.createElement("div");
-    div.classList.add("beer");
-    div.innerHTML = `
+  renderCard() {
+    const fragment = document.createDocumentFragment();
+    this.cardList.forEach(
+      ({ name, number, images, supertype, subtypes, rarity }) => {
+        const div = document.createElement("div");
+        div.innerHTML = `
         <div class="card">
           <div class="card__header">
               <h2 class="card__text">${name}</h2>
@@ -27,54 +52,45 @@ const renderCard = () => {
           <div class="description">
               <img src="${images.small}" alt="${name}" class="card-img-top">
               <p class="card__text"><b>Supertype: </b>${supertype}</p>
-              <p class="card__text"><b>Subtype: </b>${subtype}</p>
+              <p class="card__text"><b>Subtype: </b>${subtypes}</p>
               <p class="card__text"><b>Rarity: </b>${rarity}</p>
           </div>
         </div>
-        </div>
         `;
-    fragment.appendChild(div);
-  });
-  content.innerHTML = "";
-  content.appendChild(fragment);
-};
-
-const getCard = async () => {
-  try {
-    const response = await fetch(getRandomApiUrl());
-    const data = await response.json();
-    cardList.push(data.data);
-    console.log(cardList);
-  } catch (err) {
-    console.log(err);
+        fragment.appendChild(div);
+      }
+    );
+    this.content.innerHTML = "";
+    this.content.appendChild(fragment);
   }
-};
 
-const addCard = async () => {
-  for (let i = 0; i <= 3; i++) {
-    await getCard();
-  }
-  renderCard();
-};
+  searchCard(e) {
+    try {
+      const value = e.target.value;
+      const removedCards = [];
 
-const searchCard = async (e) => {
-  try {
-    const cards = document.querySelectorAll(".card");
-    const value = e.target.value;
+      for (let i = this.cardList.length - 1; i >= 0; i--) {
+        const card = this.cardList[i];
+        const name = card.name;
+        const isVisible = name.toLowerCase().includes(value.toLowerCase());
+        if (!isVisible) {
+          removedCards.push(this.cardList.splice(i, 1)[0]);
+        }
+      }
 
-    for (let i = 0; i <= cards.length; i++) {
-      const card = cards[i];
-      const data = await cardApi();
-      const isVisible = data.cardName
-        .toLowerCase()
-        .includes(value.toLowerCase());
-      card.style.display = isVisible ? "block" : "none";
+      for (const removedCard of removedCards) {
+        const name = removedCard.name;
+        const isVisible = name.toLowerCase().includes(value.toLowerCase());
+        if (isVisible) {
+          this.cardList.push(removedCard);
+        }
+      }
+
+      this.renderCard();
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
   }
-};
+}
 
-searchInput.addEventListener("input", searchCard);
-document.addEventListener("DOMContentLoaded", addCard);
-catalogButton.addEventListener("click", addCard);
+const pokemonCatalog = new PokemonCatalog();
